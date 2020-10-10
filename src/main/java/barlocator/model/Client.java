@@ -15,28 +15,27 @@ public class Client {
     private Socket server;
     private DataInputStream in;
     private DataOutputStream out;
-    private int ip;
-    private String host;
+    private final int _PORT = 3000;
+    private final String _HOST = "localhost";
     private Request req;
     private Response res;
     private Gson gson;
 
-    public Client(int ip, String host, String method, Body body) {
-        this.ip = ip;
-        this.host = host;
-        this.req = new Request(new Header(method),body);
+    public Client() {
         this.gson = new Gson();
     }
 
-    public void server(){
+    public void sendRequest(String method, Body body){
         try {
-            server = new Socket(host,ip);
+            this.req = new Request(new Header(method),body);
+            server = new Socket(_HOST,_PORT);
             in = new DataInputStream(server.getInputStream());
             out = new DataOutputStream(server.getOutputStream());
             out.writeUTF(gson.toJson(req));
             res = gson.fromJson(in.readUTF(),Response.class);
             server.close();
         } catch (IOException e) {
+            System.out.println("Cannot connect to server");
             e.printStackTrace();
         }
     }
@@ -63,5 +62,21 @@ public class Client {
 
     public void setOut(DataOutputStream out) {
         this.out = out;
+    }
+
+    public Request getReq() {
+        return req;
+    }
+
+    public void setReq(Request req) {
+        this.req = req;
+    }
+
+    public Response getRes() {
+        return res;
+    }
+
+    public void setRes(Response res) {
+        this.res = res;
     }
 }
