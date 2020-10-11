@@ -20,6 +20,12 @@ public class HomePage extends JFrame {
 	private JLabel heading2JLabel;
 	private JButton clientPageJButton;
 	private JButton adminPageJButton;
+	private Listener listener;
+
+	public interface Listener {
+		void clientPageClick(boolean isAdmin);
+		void adminPageClick(boolean isAdmin);
+	}
 
 	public HomePage() {
 		setResizable(false);
@@ -83,5 +89,13 @@ public class HomePage extends JFrame {
 
 	public JButton getAdminPageJButton() {
 		return adminPageJButton;
+	}
+
+	public Listener getListener() {
+		return listener;
+	}
+
+	public void setListener(Listener listener) {
+		this.listener = listener;
 	}
 }
