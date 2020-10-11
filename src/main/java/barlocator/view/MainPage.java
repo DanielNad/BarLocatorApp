@@ -24,6 +24,9 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
+import javax.swing.JRadioButton;
+import javax.swing.JToggleButton;
+import javax.swing.JRadioButtonMenuItem;
 
 public class MainPage extends JFrame {
 
@@ -38,6 +41,9 @@ public class MainPage extends JFrame {
 	private JButton deleteBarJButton;
 	private JButton editBarJButton;
 	private Listener listener;
+	private JLabel errorJLabel;
+	private JToggleButton algoToggleButton;
+	private boolean isDijkstra;
 
 	public interface Listener{
 		void goBack();
@@ -48,6 +54,8 @@ public class MainPage extends JFrame {
 	}
 
 	public MainPage() {
+		isDijkstra = true;
+
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1151, 744);
@@ -71,7 +79,7 @@ public class MainPage extends JFrame {
 		
 		barSearchJButton = new JButton("Search");
 		barSearchJButton.setFont(new Font("Montserrat Medium", Font.PLAIN, 17));
-		barSearchJButton.setBounds(701, 139, 85, 31);
+		barSearchJButton.setBounds(701, 139, 100, 31);
 		headerJPanel.add(barSearchJButton);
 		
 		backJButton = new JButton("");
@@ -79,6 +87,7 @@ public class MainPage extends JFrame {
 		backJButton.setBorder(BorderFactory.createEmptyBorder());
 		backJButton.setContentAreaFilled(false);
 		backJButton.setBounds(12, 13, 33, 33);
+		backJButton.addActionListener(e -> listener.goBack());
 		headerJPanel.add(backJButton);
 		
 		searchJComboBox = new JComboBox();
@@ -90,7 +99,7 @@ public class MainPage extends JFrame {
 		addBarJButton.setIcon(new ImageIcon(MainPage.class.getResource("/main/resources/images/add.png")));
 		addBarJButton.setBorder(BorderFactory.createEmptyBorder());
 		addBarJButton.setContentAreaFilled(false);
-		addBarJButton.setBounds(518, 180, 17, 20);
+		addBarJButton.setBounds(328, 183, 17, 20);
 		addBarJButton.setVisible(false);
 		headerJPanel.add(addBarJButton);
 		
@@ -98,7 +107,7 @@ public class MainPage extends JFrame {
 		deleteBarJButton.setIcon(new ImageIcon(MainPage.class.getResource("/main/resources/images/remove.png")));
 		deleteBarJButton.setBorder(BorderFactory.createEmptyBorder());
 		deleteBarJButton.setContentAreaFilled(false);
-		deleteBarJButton.setBounds(561, 180, 17, 20);
+		deleteBarJButton.setBounds(371, 183, 17, 20);
 		deleteBarJButton.setVisible(false);
 		headerJPanel.add(deleteBarJButton);
 		
@@ -106,18 +115,38 @@ public class MainPage extends JFrame {
 		editBarJButton.setIcon(new ImageIcon(MainPage.class.getResource("/main/resources/images/edit.png")));
 		editBarJButton.setBorder(BorderFactory.createEmptyBorder());
 		editBarJButton.setContentAreaFilled(false);
-		editBarJButton.setBounds(604, 180, 17, 20);
+		editBarJButton.setBounds(414, 183, 17, 20);
 		editBarJButton.setVisible(false);
 		headerJPanel.add(editBarJButton);
+		
+		errorJLabel = new JLabel("Sorry, an error has occurred");
+		errorJLabel.setVisible(false);
+		errorJLabel.setForeground(new Color(255, 0, 0));
+		errorJLabel.setBackground(new Color(255, 0, 0));
+		errorJLabel.setFont(new Font("Dialog", Font.BOLD, 17));
+		errorJLabel.setBounds(426, 29, 227, 23);
+		headerJPanel.add(errorJLabel);
+		
+		algoToggleButton = new JToggleButton("Basic Algorithm");
+		algoToggleButton.setFont(new Font("Dialog", Font.PLAIN, 15));
+		algoToggleButton.setBounds(654, 179, 147, 29);
+		algoToggleButton.addActionListener(e -> {
+			if(isDijkstra)
+				isDijkstra = false;
+			else
+				isDijkstra = true;
+		});
+		headerJPanel.add(algoToggleButton);
 		
 		bodyJPanel = new JPanel();
 		bodyJPanel.setBounds(5, 218, 1137, 493);
 		bodyJPanel.setBackground(new Color(220, 220, 220));
 		viewMainPage.add(bodyJPanel);
 		bodyJPanel.setLayout(null);
+
 	}
 
-	public void renderMainPage(boolean isAdmin, Graph<Bar> graph) {
+	public void renderComboBox(Graph<Bar> graph){
 		for (Bar bar : graph.getBars().values()) {
 			searchJComboBox.addItem(bar.getBarName());
 		}
@@ -133,6 +162,34 @@ public class MainPage extends JFrame {
 
 	public Listener getListener() {
 		return listener;
+	}
+
+	public JComboBox getSearchJComboBox() {
+		return searchJComboBox;
+	}
+
+	public JButton getAddBarJButton() {
+		return addBarJButton;
+	}
+
+	public JButton getDeleteBarJButton() {
+		return deleteBarJButton;
+	}
+
+	public JButton getEditBarJButton() {
+		return editBarJButton;
+	}
+
+	public JLabel getErrorJLabel() {
+		return errorJLabel;
+	}
+
+	public JToggleButton getAlgoToggleButton() {
+		return algoToggleButton;
+	}
+
+	public boolean isDijkstra() {
+		return isDijkstra;
 	}
 
 	public void setListener(Listener listener) {

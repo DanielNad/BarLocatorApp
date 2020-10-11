@@ -2,12 +2,8 @@ package main.java.barlocator.view;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import java.awt.GridBagLayout;
 import java.awt.Color;
-import java.awt.GridBagConstraints;
 import java.awt.Font;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class HomePage extends JFrame {
 	//Todo - add eventListeners to buttons.
@@ -21,10 +17,11 @@ public class HomePage extends JFrame {
 	private JButton clientPageJButton;
 	private JButton adminPageJButton;
 	private Listener listener;
+	private JLabel errorJLabel;
 
 	public interface Listener {
-		void clientPageClick(boolean isAdmin);
-		void adminPageClick(boolean isAdmin);
+		void clientPage(boolean isAdmin);
+		void adminPage(boolean isAdmin);
 	}
 
 	public HomePage() {
@@ -74,13 +71,22 @@ public class HomePage extends JFrame {
 		
 		clientPageJButton = new JButton("Client");
 		clientPageJButton.setFont(new Font("Montserrat Medium", Font.PLAIN, 23));
-		clientPageJButton.setBounds(411, 286, 111, 37);
+		clientPageJButton.setBounds(420, 284, 111, 37);
+		clientPageJButton.addActionListener(e -> listener.clientPage(false));
 		homePageJPanel.add(clientPageJButton);
 		
 		adminPageJButton = new JButton("Admin");
 		adminPageJButton.setFont(new Font("Montserrat Medium", Font.PLAIN, 23));
-		adminPageJButton.setBounds(411, 379, 111, 37);
+		adminPageJButton.setBounds(420, 377, 111, 37);
+		adminPageJButton.addActionListener(e -> listener.adminPage(true));
 		homePageJPanel.add(adminPageJButton);
+		
+		errorJLabel = new JLabel("Sorry, an error has occurred");
+		errorJLabel.setVisible(false);
+		errorJLabel.setForeground(new Color(255, 0, 0));
+		errorJLabel.setFont(new Font("Dialog", Font.BOLD, 18));
+		errorJLabel.setBounds(352, 447, 246, 24);
+		homePageJPanel.add(errorJLabel);
 	}
 
 	public JButton getClientPageJButton() {
@@ -89,6 +95,10 @@ public class HomePage extends JFrame {
 
 	public JButton getAdminPageJButton() {
 		return adminPageJButton;
+	}
+
+	public JLabel getErrorJLabel() {
+		return errorJLabel;
 	}
 
 	public Listener getListener() {
