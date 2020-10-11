@@ -5,14 +5,14 @@ import main.java.barlocator.view.View;
 
 public class Controller {
 
-    private ClientController clientController;
-    private HomeController homeController;
+    private MainPageController mainPageController;
+    private HomePageController homePageController;
     private Client client;
     private View view;
 
     public Controller() {
-        this.homeController = new HomeController();
-        this.clientController = new ClientController();
+        this.homePageController = new HomePageController();
+        this.mainPageController = new MainPageController();
         this.client = new Client();
         this.view = new View();
     }

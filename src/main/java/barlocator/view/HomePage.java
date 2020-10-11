@@ -76,4 +76,12 @@ public class HomePage extends JFrame {
 		adminPageJButton.setBounds(411, 379, 111, 37);
 		homePageJPanel.add(adminPageJButton);
 	}
+
+	public JButton getClientPageJButton() {
+		return clientPageJButton;
+	}
+
+	public JButton getAdminPageJButton() {
+		return adminPageJButton;
+	}
 }

@@ -1,4 +1,4 @@
 package main.java.barlocator.controller;
 
-public class ClientController {
+public class MainPageController {
 }
