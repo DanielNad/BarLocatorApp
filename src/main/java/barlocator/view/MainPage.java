@@ -2,7 +2,8 @@ package main.java.barlocator.view;
 
 import com.locator.algorithms.datastructures.Graph;
 import main.java.com.barlocator.dm.Bar;
-import sun.misc.Request;
+import main.java.com.barlocator.dm.Item;
+import main.java.com.barlocator.dm.Menu;
 
 import java.awt.Color;
 import javax.swing.*;
@@ -35,6 +36,8 @@ public class MainPage extends JFrame {
 		void deleteBar();
 		void editBar();
 		void addBarDialog(String barName , String barDes, int weight, String barTo);
+		void editBarDescription(String description);
+		void editItemPrice(double itemPrice,String menuName, String itemName);
 	}
 
 	public MainPage() {
@@ -134,9 +137,24 @@ public class MainPage extends JFrame {
 
 	}
 
-	public void renderComboBox(Graph<Bar> graph , JComboBox comboBox){
+	public void renderGraphComboBox(Graph<Bar> graph , JComboBox jComboBox){
+		jComboBox.removeAllItems();
 		for (Bar bar : graph.getBars().values()) {
-			comboBox.addItem(bar.getBarName());
+			jComboBox.addItem(bar.getBarName());
+		}
+	}
+
+	public void renderBarComboBox(Bar bar, JComboBox jComboBox){
+		jComboBox.removeAllItems();
+		for ( Menu menu : bar.getMenu().values()) {
+			jComboBox.addItem(menu.getSubMenuName());
+		}
+	}
+
+	public  void renderMenuComboBox(Menu menu, JComboBox jComboBox){
+		jComboBox.removeAllItems();
+		for (Item item : menu.getItems().values()) {
+			jComboBox.addItem(item.getItemName());
 		}
 	}
 
@@ -226,7 +244,7 @@ public class MainPage extends JFrame {
 		barToJLabel.setBounds(x,y,w,h);
 		y += h + 5;
 		barToComboBox.setBounds(x,y,w,h);
-		renderComboBox(graph,barToComboBox);
+		renderGraphComboBox(graph,barToComboBox);
 		y += h + 5;
 		weightJLabel.setBounds(x,y,w,h);
 		y += h + 5;
@@ -252,10 +270,133 @@ public class MainPage extends JFrame {
 				listener.addBarDialog(barNameJTextField.getText(),descriptionJTextField.getText(),Integer.parseInt(weightJTextField.getText()),barToComboBox.getSelectedItem().toString());
 				dialog.setVisible(false);
 			}else {
-				invalidThread(errorJLabel);
+				invalidThread(errorJLabel,errorJLabel.getText());
 			}
 		});
+	}
 
+	public void editBar(Bar bar){
+		JFrame frame = new JFrame();
+		frame.setSize(700, 700);
+		JDialog dialog = new JDialog(frame,"Edit Bar Info");
+		JLabel barNameJLabel = new JLabel("Edit " + bar.getBarName());
+		JLabel descriptionJLabel = new JLabel("Please enter a new bar description:");
+		JTextField descriptionJTextField = new JTextField();
+		JButton descriptionSubmitJButton = new JButton("Submit");
+		JLabel menuJLabel = new JLabel("Choose a menu:");
+		JComboBox menuJComboBox = new JComboBox();
+		JLabel itemJLabel = new JLabel("Choose an item to edit:");
+		JComboBox itemJComboBox = new JComboBox();
+		JTextField itemJTextField = new JTextField();
+		JButton itemSubmitJButton = new JButton("Submit");
+		JLabel errorJLabel = new JLabel("Text fields should not be empty!");
+
+		menuJLabel.setVisible(false);
+		menuJComboBox.setVisible(false);
+		itemJLabel.setVisible(false);
+		itemJComboBox.setVisible(false);
+		itemJTextField.setVisible(false);
+		itemSubmitJButton.setVisible(false);
+		errorJLabel.setVisible(false);
+
+		int x = 10;
+		int y = 10;
+		int w = 400;
+		int h = 30;
+
+		dialog.add(barNameJLabel);
+		dialog.add(descriptionJLabel);
+		dialog.add(descriptionJTextField);
+		dialog.add(descriptionSubmitJButton);
+		dialog.add(menuJLabel);
+		dialog.add(menuJComboBox);
+		dialog.add(itemJLabel);
+		dialog.add(itemJComboBox);
+		dialog.add(itemJTextField);
+		dialog.add(itemSubmitJButton);
+		dialog.add(errorJLabel);
+
+		if(!bar.getMenu().isEmpty()){
+			renderBarComboBox(bar,menuJComboBox);
+			menuJLabel.setVisible(true);
+			menuJComboBox.setVisible(true);
+			if(!bar.getMenu().get(menuJComboBox.getSelectedItem().toString()).getItems().isEmpty()){
+				renderMenuComboBox(bar.getMenu().get(menuJComboBox.getSelectedItem().toString()),itemJComboBox);
+				itemJLabel.setVisible(true);
+				itemJComboBox.setVisible(true);
+				itemJTextField.setVisible(true);
+				itemSubmitJButton.setVisible(true);
+				itemJTextField.setText(bar.getMenu().get(menuJComboBox.getSelectedItem().toString()).getItems().get(itemJComboBox.getSelectedItem().toString()).getPrice() + "");
+			}
+		}
+
+		barNameJLabel.setBounds(x,y,w,h);
+		y += h + 5;
+		descriptionJLabel.setBounds(x,y,w,h);
+		y += h + 5;
+		descriptionJTextField.setBounds(x,y,w,h);
+		descriptionSubmitJButton.setBounds(x + w + 5,y,100,h);
+		y += h + 5;
+		menuJLabel.setBounds(x,y,w,h);
+		y += h + 5;
+		menuJComboBox.setBounds(x,y,w,h);
+		renderBarComboBox(bar,menuJComboBox);
+		y += h + 5;
+		itemJLabel.setBounds(x,y,w,h);
+		y += h + 5;
+		itemJComboBox.setBounds(x,y,w,h);
+		y += h + 5;
+		itemJTextField.setBounds(x,y,w,h);
+		itemSubmitJButton.setBounds(x + w + 5,y,100,h);
+		y += h + 10;
+		errorJLabel.setBounds(175,y,w,h);
+		errorJLabel.setForeground(Color.RED);
+
+		dialog.setLayout(null);
+		dialog.setLocationByPlatform(true);
+		dialog.setLocationRelativeTo(this);
+		dialog.setSize(550,400);
+		dialog.setVisible(true);
+
+		validateNumberWithDot(itemJTextField);
+
+		descriptionSubmitJButton.addActionListener(e -> {
+			if(!descriptionJTextField.getText().equals("")){
+				listener.editBarDescription(descriptionJTextField.getText().toString());
+			}else {
+				invalidThread(errorJLabel,errorJLabel.getText());
+			}
+		});
+		itemSubmitJButton.addActionListener(e -> {
+			if(!itemJTextField.getText().equals("")){
+				listener.editItemPrice(Double.parseDouble(itemJTextField.getText()),menuJComboBox.getSelectedItem().toString(),itemJComboBox.getSelectedItem().toString());
+			} else {
+				invalidThread(errorJLabel,errorJLabel.getText());
+			}
+		});
+		menuJComboBox.addItemListener(e -> {
+			int index = e.getStateChange() - 1;
+			Menu tempMenu = bar.getMenu().get(menuJComboBox.getItemAt(index).toString());
+			if(!tempMenu.getItems().isEmpty()){
+				itemJLabel.setVisible(true);
+				itemJComboBox.setVisible(true);
+				itemJTextField.setVisible(true);
+				itemSubmitJButton.setVisible(true);
+				errorJLabel.setVisible(true);
+				renderMenuComboBox(tempMenu,itemJComboBox);
+			} else {
+				itemJLabel.setVisible(false);
+				itemJComboBox.setVisible(false);
+				itemJTextField.setVisible(false);
+				itemSubmitJButton.setVisible(false);
+				errorJLabel.setVisible(false);
+			}
+		});
+		itemJComboBox.addItemListener(e -> {
+			int index = e.getStateChange() - 1;
+			Item tempItem = bar.getMenu().get(menuJComboBox.getSelectedItem().toString()).getItems().get(itemJComboBox.getItemAt(index).toString());
+			itemJTextField.setText(tempItem.getPrice() + "");
+		});
 	}
 
 	public void validateNumber(JTextField jTextField){
@@ -267,7 +408,17 @@ public class MainPage extends JFrame {
 		});
 	}
 
-	public void invalidThread(JLabel label){
+	public void validateNumberWithDot(JTextField jTextField){
+		jTextField.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent ke) {
+				jTextField.getText();
+				jTextField.setEditable((ke.getKeyChar() >= '0' && ke.getKeyChar() <= '9') || ke.getKeyChar() == 8 || ke.getKeyChar() == '.');
+			}
+		});
+	}
+
+	public void invalidThread(JLabel label,String text){
+		label.setText(text);
 		label.setVisible(true);
 		new Thread(() -> {
 			try {
