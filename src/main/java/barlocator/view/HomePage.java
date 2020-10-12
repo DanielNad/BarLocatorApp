@@ -6,7 +6,7 @@ import java.awt.Color;
 import java.awt.Font;
 
 public class HomePage extends JFrame {
-	//Todo - add eventListeners to buttons.
+
 	private JPanel viewHomePage;
 	private JPanel homePageJPanel;
 	private JPanel headerJPanel;
@@ -99,6 +99,19 @@ public class HomePage extends JFrame {
 
 	public JLabel getErrorJLabel() {
 		return errorJLabel;
+	}
+
+	public void invalidThread(JLabel label){
+		label.setVisible(true);
+		new Thread(() -> {
+			try {
+				Thread.sleep(3000);
+				label.setVisible(false);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+		}).start();
 	}
 
 	public Listener getListener() {

@@ -13,19 +13,6 @@ public class View {
         this.homePage.setVisible(true);
     }
 
-    public void invalidThread(JLabel label){
-        label.setVisible(true);
-        new Thread(() -> {
-            try {
-                Thread.sleep(3000);
-                label.setVisible(false);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-        }).start();
-    }
-
     public void setMainPage(MainPage mainPage) {
         this.mainPage = mainPage;
     }

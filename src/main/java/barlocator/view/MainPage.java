@@ -2,31 +2,14 @@ package main.java.barlocator.view;
 
 import com.locator.algorithms.datastructures.Graph;
 import main.java.com.barlocator.dm.Bar;
+import sun.misc.Request;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import java.awt.FlowLayout;
 import java.awt.Font;
-
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.ImageIcon;
-import javax.swing.JComboBox;
-import javax.swing.JRadioButton;
-import javax.swing.JToggleButton;
-import javax.swing.JRadioButtonMenuItem;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class MainPage extends JFrame {
 
@@ -51,6 +34,7 @@ public class MainPage extends JFrame {
 		void addBar();
 		void deleteBar();
 		void editBar();
+		void addBarDialog(String barName , String barDes, int weight, String barTo);
 	}
 
 	public MainPage() {
@@ -80,6 +64,7 @@ public class MainPage extends JFrame {
 		barSearchJButton = new JButton("Search");
 		barSearchJButton.setFont(new Font("Montserrat Medium", Font.PLAIN, 17));
 		barSearchJButton.setBounds(701, 139, 100, 31);
+		barSearchJButton.addActionListener(e -> listener.search());
 		headerJPanel.add(barSearchJButton);
 		
 		backJButton = new JButton("");
@@ -101,6 +86,7 @@ public class MainPage extends JFrame {
 		addBarJButton.setContentAreaFilled(false);
 		addBarJButton.setBounds(328, 183, 17, 20);
 		addBarJButton.setVisible(false);
+		addBarJButton.addActionListener(e -> listener.addBar());
 		headerJPanel.add(addBarJButton);
 		
 		deleteBarJButton = new JButton("");
@@ -109,6 +95,7 @@ public class MainPage extends JFrame {
 		deleteBarJButton.setContentAreaFilled(false);
 		deleteBarJButton.setBounds(371, 183, 17, 20);
 		deleteBarJButton.setVisible(false);
+		deleteBarJButton.addActionListener(e -> listener.deleteBar());
 		headerJPanel.add(deleteBarJButton);
 		
 		editBarJButton = new JButton("");
@@ -117,6 +104,7 @@ public class MainPage extends JFrame {
 		editBarJButton.setContentAreaFilled(false);
 		editBarJButton.setBounds(414, 183, 17, 20);
 		editBarJButton.setVisible(false);
+		editBarJButton.addActionListener(e -> listener.editBar());
 		headerJPanel.add(editBarJButton);
 		
 		errorJLabel = new JLabel("Sorry, an error has occurred");
@@ -146,9 +134,9 @@ public class MainPage extends JFrame {
 
 	}
 
-	public void renderComboBox(Graph<Bar> graph){
+	public void renderComboBox(Graph<Bar> graph , JComboBox comboBox){
 		for (Bar bar : graph.getBars().values()) {
-			searchJComboBox.addItem(bar.getBarName());
+			comboBox.addItem(bar.getBarName());
 		}
 	}
 
@@ -188,8 +176,108 @@ public class MainPage extends JFrame {
 		return algoToggleButton;
 	}
 
+	public JPanel getBodyJPanel() {
+		return bodyJPanel;
+	}
+
 	public boolean isDijkstra() {
 		return isDijkstra;
+	}
+
+	public void addBar(Graph graph){
+		JFrame frame = new JFrame();
+		frame.setSize(700, 700);
+		JDialog dialog = new JDialog(frame,"Add new Bar");
+		JLabel barNameJLabel = new JLabel("Please enter a bar name:");
+		JTextField barNameJTextField = new JTextField();
+		JLabel descriptionJLabel = new JLabel("Please enter a bar description:");
+		JTextField descriptionJTextField = new JTextField();
+		JLabel barToJLabel = new JLabel("Please enter a bar to connect:");
+		JComboBox barToComboBox = new JComboBox();
+		JLabel weightJLabel = new JLabel("Please enter a distance between the bars:");
+		JTextField weightJTextField = new JTextField();
+		JLabel errorJLabel = new JLabel("Text fields should not be empty!");
+		JButton submitButton = new JButton();
+
+		int x = 10;
+		int y = 10;
+		int w = 400;
+		int h = 30;
+
+		dialog.add(barNameJLabel);
+		dialog.add(barNameJTextField);
+		dialog.add(descriptionJLabel);
+		dialog.add(descriptionJTextField);
+		dialog.add(barToJLabel);
+		dialog.add(barToComboBox);
+		dialog.add(weightJLabel);
+		dialog.add(weightJTextField);
+		dialog.add(errorJLabel);
+		dialog.add(submitButton);
+
+		barNameJLabel.setBounds(x,y,w,h);
+		y += h + 5;
+		barNameJTextField.setBounds(x,y,w,h);
+		y += h + 5;
+		descriptionJLabel.setBounds(x,y,w,h);
+		y += h + 5;
+		descriptionJTextField.setBounds(x,y,w,h);
+		y += h + 5;
+		barToJLabel.setBounds(x,y,w,h);
+		y += h + 5;
+		barToComboBox.setBounds(x,y,w,h);
+		renderComboBox(graph,barToComboBox);
+		y += h + 5;
+		weightJLabel.setBounds(x,y,w,h);
+		y += h + 5;
+		weightJTextField.setBounds(x,y,w,h);
+		y += h + 10;
+		errorJLabel.setBounds(x,y,w,h);
+		errorJLabel.setVisible(false);
+		errorJLabel.setForeground(Color.RED);
+		y += h + 10;
+		submitButton.setBounds(220,y,60,20);
+		submitButton.setText("OK");
+
+		dialog.setLayout(null);
+		dialog.setLocationByPlatform(true);
+		dialog.setLocationRelativeTo(this);
+		dialog.setSize(500,430);
+		dialog.setVisible(true);
+
+		validateNumber(weightJTextField);
+
+		submitButton.addActionListener(e -> {
+			if(!barNameJTextField.getText().equals("") && !descriptionJTextField.getText().equals("") && !weightJTextField.getText().equals("")){
+				listener.addBarDialog(barNameJTextField.getText(),descriptionJTextField.getText(),Integer.parseInt(weightJTextField.getText()),barToComboBox.getSelectedItem().toString());
+				dialog.setVisible(false);
+			}else {
+				invalidThread(errorJLabel);
+			}
+		});
+
+	}
+
+	public void validateNumber(JTextField jTextField){
+		jTextField.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent ke) {
+				jTextField.getText();
+				jTextField.setEditable((ke.getKeyChar() >= '0' && ke.getKeyChar() <= '9') || ke.getKeyChar() == 8);
+			}
+		});
+	}
+
+	public void invalidThread(JLabel label){
+		label.setVisible(true);
+		new Thread(() -> {
+			try {
+				Thread.sleep(3000);
+				label.setVisible(false);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+		}).start();
 	}
 
 	public void setListener(Listener listener) {
