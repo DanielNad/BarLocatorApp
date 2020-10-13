@@ -1,17 +1,19 @@
 package main.java.barlocator.view;
 
 import com.locator.algorithms.datastructures.Graph;
+import com.sun.deploy.security.ruleset.Rule;
 import main.java.com.barlocator.dm.Bar;
+import main.java.com.barlocator.dm.DistanceDict;
 import main.java.com.barlocator.dm.Item;
 import main.java.com.barlocator.dm.Menu;
 
-import java.awt.Color;
+import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import java.awt.Font;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import javax.swing.border.BevelBorder;
+import java.util.ArrayList;
+import javax.swing.border.LineBorder;
 
 public class MainPage extends JFrame {
 
@@ -32,8 +34,14 @@ public class MainPage extends JFrame {
 	private JScrollPane scrollPane;
 	private JButton addMenuJButton;
 	private JButton addItemJButton;
-	private JButton btnNewButton;
+	private JButton addEdgeJButton;
 	private JLabel addEdgeJLabel;
+	private JLabel editBarJLabel;
+	private JLabel addBarJLabel;
+	private JLabel addMenuJLabel;
+	private JLabel addItemJLabel;
+	private JLabel removeBarJLabel;
+	private JPanel viewPort;
 
 	public interface Listener{
 		void goBack();
@@ -41,9 +49,16 @@ public class MainPage extends JFrame {
 		void addBar();
 		void deleteBar();
 		void editBar();
+		void addMenu();
+		void addItem();
+		void addEdge();
 		void addBarDialog(String barName , String barDes, int weight, String barTo);
 		void editBarDescription(String description);
 		void editItemPrice(double itemPrice,String menuName, String itemName);
+		void addMenuDialog(String barName ,Menu menu);
+		void addItemDialog(String barName, String menu,Item item);
+		void addEdgeDialog(String barFrom ,String barTo,int weight);
+		void openMenu(int i);
 	}
 
 	public MainPage() {
@@ -58,7 +73,7 @@ public class MainPage extends JFrame {
 		viewMainPage.setLayout(null);
 		
 		headerJPanel = new JPanel();
-		headerJPanel.setBounds(5, 5, 1137, 213);
+		headerJPanel.setBounds(5, 5, 1137, 218);
 		headerJPanel.setBackground(new Color(0, 191, 255));
 		viewMainPage.add(headerJPanel);
 		headerJPanel.setLayout(null);
@@ -115,92 +130,108 @@ public class MainPage extends JFrame {
 		bodyJPanel.setLayout(null);
 		
 		scrollPane = new JScrollPane();
-		scrollPane.setBounds(247, 0, 890, 493);
+		scrollPane.setBounds(247, 0, 890, 490);
 		bodyJPanel.add(scrollPane);
 		
-		JLabel addBarJLabel = new JLabel("Add Bar");
+		viewPort = new JPanel();
+		scrollPane.setViewportView(viewPort);
+		viewPort.setLayout(new BorderLayout(0, 0));
+		
+		addBarJLabel = new JLabel("Add Bar");
+		addBarJLabel.setBounds(8, 66, 50, 33);
+		addBarJLabel.setVisible(false);
 		addBarJLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		addBarJLabel.setBounds(10, 10, 50, 33);
 		bodyJPanel.add(addBarJLabel);
 		
-		JLabel addMenuJLabel = new JLabel("Add Menu");
+		addMenuJLabel = new JLabel("Add Menu");
+		addMenuJLabel.setBounds(8, 109, 64, 33);
+		addMenuJLabel.setVisible(false);
 		addMenuJLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		addMenuJLabel.setBounds(10, 53, 64, 33);
 		bodyJPanel.add(addMenuJLabel);
 		
-		JLabel addItemJLabel = new JLabel("Add Item");
+		addItemJLabel = new JLabel("Add Item");
+		addItemJLabel.setBounds(8, 153, 59, 33);
+		addItemJLabel.setVisible(false);
 		addItemJLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		addItemJLabel.setBounds(10, 97, 59, 33);
 		bodyJPanel.add(addItemJLabel);
 		
-		JLabel removeBarJLabel = new JLabel("Remove Bar");
+		removeBarJLabel = new JLabel("Remove Bar");
+		removeBarJLabel.setBounds(8, 240, 79, 33);
+		removeBarJLabel.setVisible(false);
 		removeBarJLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		removeBarJLabel.setBounds(10, 184, 79, 33);
 		bodyJPanel.add(removeBarJLabel);
+
+		addEdgeJLabel = new JLabel("Add Connection");
+		addEdgeJLabel.setBounds(8, 196, 100, 33);
+		addEdgeJLabel.setVisible(false);
+		addEdgeJLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		bodyJPanel.add(addEdgeJLabel);
 		
-		JLabel editBarJLabel = new JLabel("Edit");
+		editBarJLabel = new JLabel("Edit");
+		editBarJLabel.setBounds(8, 283, 24, 33);
+		editBarJLabel.setVisible(false);
 		editBarJLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		editBarJLabel.setBounds(10, 227, 24, 33);
 		bodyJPanel.add(editBarJLabel);
 		
 		addBarJButton = new JButton("");
+		addBarJButton.setBounds(202, 66, 33, 33);
 		addBarJButton.setHorizontalTextPosition(SwingConstants.CENTER);
 		addBarJButton.setBorder(new EmptyBorder(0, 0, 0, 0));
-		addBarJButton.setBounds(204, 10, 33, 33);
 		bodyJPanel.add(addBarJButton);
 		addBarJButton.setIcon(new ImageIcon(MainPage.class.getResource("/main/resources/images/add.png")));
 		addBarJButton.setContentAreaFilled(false);
+		addBarJButton.setVisible(false);
+		addBarJButton.addActionListener(e -> listener.addBar());
 		
 		deleteBarJButton = new JButton("");
+		deleteBarJButton.setBounds(202, 240, 33, 33);
 		deleteBarJButton.setHorizontalTextPosition(SwingConstants.CENTER);
-		deleteBarJButton.setBounds(204, 184, 33, 33);
 		bodyJPanel.add(deleteBarJButton);
 		deleteBarJButton.setIcon(new ImageIcon(MainPage.class.getResource("/main/resources/images/remove.png")));
 		deleteBarJButton.setBorder(BorderFactory.createEmptyBorder());
 		deleteBarJButton.setContentAreaFilled(false);
+		deleteBarJButton.setVisible(false);
+		deleteBarJButton.addActionListener(e -> listener.deleteBar());
 		
 		editBarJButton = new JButton("");
+		editBarJButton.setBounds(202, 283, 33, 33);
 		editBarJButton.setHorizontalTextPosition(SwingConstants.CENTER);
-		editBarJButton.setBounds(204, 227, 33, 33);
 		bodyJPanel.add(editBarJButton);
 		editBarJButton.setIcon(new ImageIcon(MainPage.class.getResource("/main/resources/images/edit.png")));
 		editBarJButton.setBorder(BorderFactory.createEmptyBorder());
 		editBarJButton.setContentAreaFilled(false);
+		editBarJButton.setVisible(false);
+		editBarJButton.addActionListener(e -> listener.editBar());
 		
 		addMenuJButton = new JButton("");
+		addMenuJButton.setBounds(202, 109, 33, 33);
 		addMenuJButton.setHorizontalTextPosition(SwingConstants.CENTER);
 		addMenuJButton.setIcon(new ImageIcon(MainPage.class.getResource("/main/resources/images/add-menu.png")));
 		addMenuJButton.setContentAreaFilled(false);
-		addMenuJButton.setBounds(204, 53, 33, 33);
+		addMenuJButton.setBorder(BorderFactory.createEmptyBorder());
+		addMenuJButton.setVisible(false);
+		addMenuJButton.addActionListener(e -> listener.addMenu());
 		bodyJPanel.add(addMenuJButton);
 		
 		addItemJButton = new JButton("");
+		addItemJButton.setBounds(202, 153, 33, 33);
 		addItemJButton.setHorizontalTextPosition(SwingConstants.CENTER);
 		addItemJButton.setIcon(new ImageIcon(MainPage.class.getResource("/main/resources/images/add-item.png")));
 		addItemJButton.setContentAreaFilled(false);
 		addItemJButton.setBorder(new EmptyBorder(0, 0, 0, 0));
-		addItemJButton.setBounds(204, 97, 33, 33);
+		addItemJButton.setVisible(false);
+		addItemJButton.addActionListener(e -> listener.addItem());
 		bodyJPanel.add(addItemJButton);
 		
-		btnNewButton = new JButton("");
-		btnNewButton.setHorizontalTextPosition(SwingConstants.CENTER);
-		btnNewButton.setContentAreaFilled(false);
-		btnNewButton.setIcon(new ImageIcon(MainPage.class.getResource("/main/resources/images/edge.png")));
-		btnNewButton.setBorder(new EmptyBorder(0, 0, 0, 0));
-		btnNewButton.setBounds(204, 140, 33, 33);
-		bodyJPanel.add(btnNewButton);
-		
-		addEdgeJLabel = new JLabel("Add Connection");
-		addEdgeJLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		addEdgeJLabel.setBounds(10, 140, 100, 33);
-		bodyJPanel.add(addEdgeJLabel);
-		editBarJButton.setVisible(false);
-		editBarJButton.addActionListener(e -> listener.editBar());
-		deleteBarJButton.setVisible(false);
-		deleteBarJButton.addActionListener(e -> listener.deleteBar());
-		addBarJButton.setVisible(false);
-		addBarJButton.addActionListener(e -> listener.addBar());
-
+		addEdgeJButton = new JButton("");
+		addEdgeJButton.setBounds(202, 196, 33, 33);
+		addEdgeJButton.setHorizontalTextPosition(SwingConstants.CENTER);
+		addEdgeJButton.setContentAreaFilled(false);
+		addEdgeJButton.setIcon(new ImageIcon(MainPage.class.getResource("/main/resources/images/edge.png")));
+		addEdgeJButton.setBorder(new EmptyBorder(0, 0, 0, 0));
+		addEdgeJButton.setVisible(false);
+		addEdgeJButton.addActionListener(e -> listener.addEdge());
+		bodyJPanel.add(addEdgeJButton);
 	}
 
 	public void renderGraphComboBox(Graph<Bar> graph , JComboBox jComboBox){
@@ -254,6 +285,42 @@ public class MainPage extends JFrame {
 
 	public JLabel getErrorJLabel() {
 		return errorJLabel;
+	}
+
+	public JButton getAddMenuJButton() {
+		return addMenuJButton;
+	}
+
+	public JButton getAddItemJButton() {
+		return addItemJButton;
+	}
+
+	public JButton getAddEdgeJButton() {
+		return addEdgeJButton;
+	}
+
+	public JLabel getAddEdgeJLabel() {
+		return addEdgeJLabel;
+	}
+
+	public JLabel getEditBarJLabel() {
+		return editBarJLabel;
+	}
+
+	public JLabel getAddBarJLabel() {
+		return addBarJLabel;
+	}
+
+	public JLabel getAddMenuJLabel() {
+		return addMenuJLabel;
+	}
+
+	public JLabel getAddItemJLabel() {
+		return addItemJLabel;
+	}
+
+	public JLabel getRemoveBarJLabel() {
+		return removeBarJLabel;
 	}
 
 	public JToggleButton getAlgoToggleButton() {
@@ -341,6 +408,210 @@ public class MainPage extends JFrame {
 		});
 	}
 
+	public void addMenu(){
+		JFrame frame = new JFrame();
+		frame.setSize(700, 700);
+		JDialog dialog = new JDialog(frame,"Add new Menu");
+		JLabel menuNameJLabel = new JLabel("Please enter a menu name:");
+		JTextField menuNameJTextField = new JTextField();
+		JLabel errorJLabel = new JLabel("Text fields should not be empty!");
+		JButton submitButton = new JButton();
+
+		int x = 10;
+		int y = 10;
+		int w = 400;
+		int h = 30;
+
+		dialog.getContentPane().add(menuNameJLabel);
+		dialog.getContentPane().add(menuNameJTextField);
+		dialog.getContentPane().add(errorJLabel);
+		dialog.getContentPane().add(submitButton);
+
+		menuNameJLabel.setBounds(x,y,w,h);
+		y += h + 5;
+		menuNameJTextField.setBounds(x,y,w,h);
+		y += h + 10;
+		errorJLabel.setBounds(x,y,w,h);
+		errorJLabel.setVisible(false);
+		errorJLabel.setForeground(Color.RED);
+		y += h + 10;
+		submitButton.setBounds(200,y,60,20);
+		submitButton.setText("OK");
+
+		dialog.getContentPane().setLayout(null);
+		dialog.setLocationByPlatform(true);
+		dialog.setLocationRelativeTo(this);
+		dialog.setSize(500,220);
+		dialog.setVisible(true);
+
+		submitButton.addActionListener(e -> {
+			if(!menuNameJTextField.getText().equals("")){
+				listener.addMenuDialog(searchJComboBox.getSelectedItem().toString(),new Menu(menuNameJTextField.getText()));
+			}else{
+				invalidThread(errorJLabel,errorJLabel.getText());
+			}
+		});
+
+	}
+
+	public void addItem(Bar bar){
+		JFrame frame = new JFrame();
+		frame.setSize(700, 700);
+		JDialog dialog = new JDialog(frame,"Add item to menu");
+		JLabel menuNameJLabel = new JLabel("Choose a menu:");
+		JComboBox menuJComboBox = new JComboBox();
+		JLabel itemNameJLabel = new JLabel("Please enter an item name:");
+		JTextField itemNameJTextField = new JTextField();
+		JLabel itemPriceJLabel = new JLabel("Please enter a price for the item:");
+		JTextField itemPriceJTextField = new JTextField();
+		JButton submitJButton = new JButton("Submit");
+		JLabel errorJLabel = new JLabel("Text fields should not be empty!");
+
+		menuNameJLabel.setVisible(false);
+		menuJComboBox.setVisible(false);
+		itemNameJLabel.setVisible(false);
+		itemNameJTextField.setVisible(false);
+		itemPriceJLabel.setVisible(false);
+		itemPriceJTextField.setVisible(false);
+		submitJButton.setVisible(false);
+		errorJLabel.setVisible(false);
+
+
+		int x = 10;
+		int y = 10;
+		int w = 400;
+		int h = 30;
+
+		dialog.getContentPane().add(menuNameJLabel);
+		dialog.getContentPane().add(menuJComboBox);
+		dialog.getContentPane().add(itemNameJLabel);
+		dialog.getContentPane().add(itemNameJTextField);
+		dialog.getContentPane().add(itemPriceJLabel);
+		dialog.getContentPane().add(itemPriceJTextField);
+		dialog.getContentPane().add(submitJButton);
+		dialog.getContentPane().add(errorJLabel);
+
+		if(!bar.getMenu().isEmpty()){
+			renderBarComboBox(bar,menuJComboBox);
+			menuNameJLabel.setVisible(true);
+			menuJComboBox.setVisible(true);
+			itemNameJLabel.setVisible(true);
+			itemNameJTextField.setVisible(true);
+			itemPriceJLabel.setVisible(true);
+			itemPriceJTextField.setVisible(true);
+			submitJButton.setVisible(true);
+		} else{
+			invalidThread(errorJLabel,"This bar does not have any menus");
+		}
+
+		menuNameJLabel.setBounds(x,y,w,h);
+		y += h + 5;
+		menuJComboBox.setBounds(x,y,w,h);
+		y += h + 5;
+		itemNameJLabel.setBounds(x,y,w,h);
+		y += h + 5;
+		itemNameJTextField.setBounds(x,y,w,h);
+		y += h + 5;
+		itemPriceJLabel.setBounds(x,y,w,h);
+		y += h + 5;
+		itemPriceJTextField.setBounds(x,y,w,h);
+		y += h + 5;
+		errorJLabel.setBounds(x,y,w,h);
+		errorJLabel.setForeground(Color.RED);
+		y += h + 10;
+		submitJButton.setBounds(175,y,60,20);
+		submitJButton.setText("OK");
+
+		dialog.getContentPane().setLayout(null);
+		dialog.setLocationByPlatform(true);
+		dialog.setLocationRelativeTo(this);
+		dialog.setSize(450,350);
+		dialog.setVisible(true);
+
+		validateNumberWithDot(itemPriceJTextField);
+
+		submitJButton.addActionListener(e -> {
+			if(!itemNameJTextField.getText().equals("") && !itemPriceJTextField.getText().equals("")){
+				listener.addItemDialog(bar.getBarName(),menuJComboBox.getSelectedItem().toString(),new Item(itemNameJTextField.getText(),Double.parseDouble(itemPriceJTextField.getText())));
+			}else {
+				invalidThread(errorJLabel,"Text fields should not be empty!");
+			}
+		});
+	}
+
+	public void addEdge() {
+		JFrame frame = new JFrame();
+		frame.setSize(700, 700);
+		JDialog dialog = new JDialog(frame,"Connect bar");
+		JLabel barFromNameJLabel = new JLabel("1st Bar:");
+		JComboBox barFromNameJComboBox = new JComboBox();
+		JLabel barToNameJLabel = new JLabel("2nd Bar:");
+		JComboBox barToNameJComboBox = new JComboBox();
+		JLabel weightJLabel = new JLabel("Enter distance:");
+		JTextField weightJTextField = new JTextField();
+		JButton submitJButton = new JButton("Submit");
+		JLabel errorJLabel = new JLabel("Text fields should not be empty!");
+		errorJLabel.setVisible(false);
+
+		dialog.getContentPane().add(barFromNameJLabel);
+		dialog.getContentPane().add(barFromNameJComboBox);
+		dialog.getContentPane().add(barToNameJLabel);
+		dialog.getContentPane().add(barToNameJComboBox);
+		dialog.getContentPane().add(weightJLabel);
+		dialog.getContentPane().add(weightJTextField);
+		dialog.getContentPane().add(submitJButton);
+		dialog.getContentPane().add(errorJLabel);
+
+		int x = 10;
+		int y = 10;
+		int w = 400;
+		int h = 30;
+
+		barFromNameJLabel.setBounds(x,y,w,h);
+		y += h + 5;
+		barFromNameJComboBox.setBounds(x,y,w,h);
+		y += h + 5;
+		barToNameJLabel.setBounds(x,y,w,h);
+		y += h + 5;
+		barToNameJComboBox.setBounds(x,y,w,h);
+		y += h + 5;
+		weightJLabel.setBounds(x,y,w,h);
+		y += h + 5;
+		weightJTextField.setBounds(x,y,w,h);
+		y += h + 5;
+		errorJLabel.setBounds(x,y,w,h);
+		errorJLabel.setForeground(Color.RED);
+		y += h + 10;
+		submitJButton.setBounds(175,y,60,20);
+		submitJButton.setText("OK");
+
+		dialog.getContentPane().setLayout(null);
+		dialog.setLocationByPlatform(true);
+		dialog.setLocationRelativeTo(this);
+		dialog.setSize(450,350);
+		dialog.setVisible(true);
+
+		for (int i = 0; i < searchJComboBox.getItemCount() ; i++) {
+			barFromNameJComboBox.addItem(searchJComboBox.getItemAt(i));
+			barToNameJComboBox.addItem(searchJComboBox.getItemAt(i));
+		}
+
+		validateNumber(weightJTextField);
+
+		submitJButton.addActionListener(e -> {
+			if(!weightJTextField.getText().equals("")){
+				if (barFromNameJComboBox.getSelectedItem().toString().equals(barToNameJComboBox.getSelectedItem().toString())){
+					invalidThread(errorJLabel,"Please choose two different bars");
+				} else {
+					listener.addEdgeDialog(barFromNameJComboBox.getSelectedItem().toString(),barToNameJComboBox.getSelectedItem().toString(),Integer.parseInt(weightJTextField.getText()));
+					dialog.setVisible(false);
+				}
+			} else{
+				invalidThread(errorJLabel,errorJLabel.getText());
+			}
+		});
+	}
+
 	public void editBar(Bar bar){
 		JFrame frame = new JFrame();
 		frame.setSize(700, 700);
@@ -406,7 +677,6 @@ public class MainPage extends JFrame {
 		menuJLabel.setBounds(x,y,w,h);
 		y += h + 5;
 		menuJComboBox.setBounds(x,y,w,h);
-		renderBarComboBox(bar,menuJComboBox);
 		y += h + 5;
 		itemJLabel.setBounds(x,y,w,h);
 		y += h + 5;
@@ -465,6 +735,44 @@ public class MainPage extends JFrame {
 		});
 	}
 
+	public void search(Graph<Bar> graph, ArrayList<DistanceDict> distance){
+
+		int x = 260;
+		int yLabel = 10;
+		int yPanel = 0;
+		int w = 870;
+		int hLabel = 30;
+		int hPanel = 130;
+
+		for (int i = 0; i < distance.size() ; i++) {
+			JPanel panel = new JPanel();
+			JLabel barNameJLabel = new JLabel(graph.getBars().get(distance.get(i).getIndex()).getBarName());
+			JLabel distanceJLabel = new JLabel(distance.get(i).getDistance()+"");
+			JLabel descriptionJLabel = new JLabel(graph.getBars().get(distance.get(i).getIndex()).getDescription());
+			JButton openMenu = new JButton("Open Menu");
+
+			barNameJLabel.setBounds(x,yLabel,w,hLabel);
+			yLabel += yLabel + hLabel;
+			distanceJLabel.setBounds(x,yLabel,w,hLabel);
+			yLabel += yLabel + hLabel;
+			descriptionJLabel.setBounds(x,yLabel,w,hLabel);
+			openMenu.setBounds(760,hPanel - hLabel - 10,100,hLabel);
+
+
+			panel.add(barNameJLabel);
+			panel.add(distanceJLabel);
+			panel.add(descriptionJLabel);
+			panel.add(openMenu);
+			viewPort.add(panel);
+			int finalI = i;
+			openMenu.addActionListener(e -> listener.openMenu(finalI));
+			panel.setBounds(x,yPanel,w,hPanel);
+			yPanel += 135;
+			yLabel += yPanel;
+			panel.setBorder(new LineBorder(new Color(0, 191, 255), 2, true));
+		}
+	}
+
 	public void validateNumber(JTextField jTextField){
 		jTextField.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent ke) {
@@ -484,12 +792,14 @@ public class MainPage extends JFrame {
 	}
 
 	public void invalidThread(JLabel label,String text){
+		String preText = label.getText();
 		label.setText(text);
 		label.setVisible(true);
 		new Thread(() -> {
 			try {
 				Thread.sleep(3000);
 				label.setVisible(false);
+				label.setText(preText);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
