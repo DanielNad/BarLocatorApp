@@ -11,6 +11,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.Font;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import javax.swing.border.BevelBorder;
 
 public class MainPage extends JFrame {
 
@@ -28,6 +29,11 @@ public class MainPage extends JFrame {
 	private JLabel errorJLabel;
 	private JToggleButton algoToggleButton;
 	private boolean isDijkstra;
+	private JScrollPane scrollPane;
+	private JButton addMenuJButton;
+	private JButton addItemJButton;
+	private JButton btnNewButton;
+	private JLabel addEdgeJLabel;
 
 	public interface Listener{
 		void goBack();
@@ -60,13 +66,13 @@ public class MainPage extends JFrame {
 		headingJLabel = new JLabel("Welcome to Bar Locator");
 		headingJLabel.setIcon(new ImageIcon(MainPage.class.getResource("/main/resources/images/bar.png")));
 		headingJLabel.setForeground(new Color(255, 250, 250));
-		headingJLabel.setFont(new Font("Montserrat Medium", Font.PLAIN, 25));
-		headingJLabel.setBounds(403, 65, 378, 64);
+		headingJLabel.setFont(new Font("Dialog", Font.PLAIN, 25));
+		headingJLabel.setBounds(342, 65, 378, 64);
 		headerJPanel.add(headingJLabel);
 		
 		barSearchJButton = new JButton("Search");
-		barSearchJButton.setFont(new Font("Montserrat Medium", Font.PLAIN, 17));
-		barSearchJButton.setBounds(701, 139, 100, 31);
+		barSearchJButton.setFont(new Font("Dialog", Font.PLAIN, 17));
+		barSearchJButton.setBounds(663, 140, 100, 30);
 		barSearchJButton.addActionListener(e -> listener.search());
 		headerJPanel.add(barSearchJButton);
 		
@@ -80,35 +86,8 @@ public class MainPage extends JFrame {
 		
 		searchJComboBox = new JComboBox();
 		barSearchJButton.setFont(new Font("Montserrat Medium", Font.PLAIN, 17));
-		searchJComboBox.setBounds(328, 139, 349, 31);
+		searchJComboBox.setBounds(283, 140, 213, 30);
 		headerJPanel.add(searchJComboBox);
-		
-		addBarJButton = new JButton("");
-		addBarJButton.setIcon(new ImageIcon(MainPage.class.getResource("/main/resources/images/add.png")));
-		addBarJButton.setBorder(BorderFactory.createEmptyBorder());
-		addBarJButton.setContentAreaFilled(false);
-		addBarJButton.setBounds(328, 183, 17, 20);
-		addBarJButton.setVisible(false);
-		addBarJButton.addActionListener(e -> listener.addBar());
-		headerJPanel.add(addBarJButton);
-		
-		deleteBarJButton = new JButton("");
-		deleteBarJButton.setIcon(new ImageIcon(MainPage.class.getResource("/main/resources/images/remove.png")));
-		deleteBarJButton.setBorder(BorderFactory.createEmptyBorder());
-		deleteBarJButton.setContentAreaFilled(false);
-		deleteBarJButton.setBounds(371, 183, 17, 20);
-		deleteBarJButton.setVisible(false);
-		deleteBarJButton.addActionListener(e -> listener.deleteBar());
-		headerJPanel.add(deleteBarJButton);
-		
-		editBarJButton = new JButton("");
-		editBarJButton.setIcon(new ImageIcon(MainPage.class.getResource("/main/resources/images/edit.png")));
-		editBarJButton.setBorder(BorderFactory.createEmptyBorder());
-		editBarJButton.setContentAreaFilled(false);
-		editBarJButton.setBounds(414, 183, 17, 20);
-		editBarJButton.setVisible(false);
-		editBarJButton.addActionListener(e -> listener.editBar());
-		headerJPanel.add(editBarJButton);
 		
 		errorJLabel = new JLabel("Sorry, an error has occurred");
 		errorJLabel.setVisible(false);
@@ -120,7 +99,7 @@ public class MainPage extends JFrame {
 		
 		algoToggleButton = new JToggleButton("Basic Algorithm");
 		algoToggleButton.setFont(new Font("Dialog", Font.PLAIN, 15));
-		algoToggleButton.setBounds(654, 179, 147, 29);
+		algoToggleButton.setBounds(506, 140, 147, 30);
 		algoToggleButton.addActionListener(e -> {
 			if(isDijkstra)
 				isDijkstra = false;
@@ -134,6 +113,93 @@ public class MainPage extends JFrame {
 		bodyJPanel.setBackground(new Color(220, 220, 220));
 		viewMainPage.add(bodyJPanel);
 		bodyJPanel.setLayout(null);
+		
+		scrollPane = new JScrollPane();
+		scrollPane.setBounds(247, 0, 890, 493);
+		bodyJPanel.add(scrollPane);
+		
+		JLabel addBarJLabel = new JLabel("Add Bar");
+		addBarJLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		addBarJLabel.setBounds(10, 10, 50, 33);
+		bodyJPanel.add(addBarJLabel);
+		
+		JLabel addMenuJLabel = new JLabel("Add Menu");
+		addMenuJLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		addMenuJLabel.setBounds(10, 53, 64, 33);
+		bodyJPanel.add(addMenuJLabel);
+		
+		JLabel addItemJLabel = new JLabel("Add Item");
+		addItemJLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		addItemJLabel.setBounds(10, 97, 59, 33);
+		bodyJPanel.add(addItemJLabel);
+		
+		JLabel removeBarJLabel = new JLabel("Remove Bar");
+		removeBarJLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		removeBarJLabel.setBounds(10, 184, 79, 33);
+		bodyJPanel.add(removeBarJLabel);
+		
+		JLabel editBarJLabel = new JLabel("Edit");
+		editBarJLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		editBarJLabel.setBounds(10, 227, 24, 33);
+		bodyJPanel.add(editBarJLabel);
+		
+		addBarJButton = new JButton("");
+		addBarJButton.setHorizontalTextPosition(SwingConstants.CENTER);
+		addBarJButton.setBorder(new EmptyBorder(0, 0, 0, 0));
+		addBarJButton.setBounds(204, 10, 33, 33);
+		bodyJPanel.add(addBarJButton);
+		addBarJButton.setIcon(new ImageIcon(MainPage.class.getResource("/main/resources/images/add.png")));
+		addBarJButton.setContentAreaFilled(false);
+		
+		deleteBarJButton = new JButton("");
+		deleteBarJButton.setHorizontalTextPosition(SwingConstants.CENTER);
+		deleteBarJButton.setBounds(204, 184, 33, 33);
+		bodyJPanel.add(deleteBarJButton);
+		deleteBarJButton.setIcon(new ImageIcon(MainPage.class.getResource("/main/resources/images/remove.png")));
+		deleteBarJButton.setBorder(BorderFactory.createEmptyBorder());
+		deleteBarJButton.setContentAreaFilled(false);
+		
+		editBarJButton = new JButton("");
+		editBarJButton.setHorizontalTextPosition(SwingConstants.CENTER);
+		editBarJButton.setBounds(204, 227, 33, 33);
+		bodyJPanel.add(editBarJButton);
+		editBarJButton.setIcon(new ImageIcon(MainPage.class.getResource("/main/resources/images/edit.png")));
+		editBarJButton.setBorder(BorderFactory.createEmptyBorder());
+		editBarJButton.setContentAreaFilled(false);
+		
+		addMenuJButton = new JButton("");
+		addMenuJButton.setHorizontalTextPosition(SwingConstants.CENTER);
+		addMenuJButton.setIcon(new ImageIcon(MainPage.class.getResource("/main/resources/images/add-menu.png")));
+		addMenuJButton.setContentAreaFilled(false);
+		addMenuJButton.setBounds(204, 53, 33, 33);
+		bodyJPanel.add(addMenuJButton);
+		
+		addItemJButton = new JButton("");
+		addItemJButton.setHorizontalTextPosition(SwingConstants.CENTER);
+		addItemJButton.setIcon(new ImageIcon(MainPage.class.getResource("/main/resources/images/add-item.png")));
+		addItemJButton.setContentAreaFilled(false);
+		addItemJButton.setBorder(new EmptyBorder(0, 0, 0, 0));
+		addItemJButton.setBounds(204, 97, 33, 33);
+		bodyJPanel.add(addItemJButton);
+		
+		btnNewButton = new JButton("");
+		btnNewButton.setHorizontalTextPosition(SwingConstants.CENTER);
+		btnNewButton.setContentAreaFilled(false);
+		btnNewButton.setIcon(new ImageIcon(MainPage.class.getResource("/main/resources/images/edge.png")));
+		btnNewButton.setBorder(new EmptyBorder(0, 0, 0, 0));
+		btnNewButton.setBounds(204, 140, 33, 33);
+		bodyJPanel.add(btnNewButton);
+		
+		addEdgeJLabel = new JLabel("Add Connection");
+		addEdgeJLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		addEdgeJLabel.setBounds(10, 140, 100, 33);
+		bodyJPanel.add(addEdgeJLabel);
+		editBarJButton.setVisible(false);
+		editBarJButton.addActionListener(e -> listener.editBar());
+		deleteBarJButton.setVisible(false);
+		deleteBarJButton.addActionListener(e -> listener.deleteBar());
+		addBarJButton.setVisible(false);
+		addBarJButton.addActionListener(e -> listener.addBar());
 
 	}
 
@@ -222,16 +288,16 @@ public class MainPage extends JFrame {
 		int w = 400;
 		int h = 30;
 
-		dialog.add(barNameJLabel);
-		dialog.add(barNameJTextField);
-		dialog.add(descriptionJLabel);
-		dialog.add(descriptionJTextField);
-		dialog.add(barToJLabel);
-		dialog.add(barToComboBox);
-		dialog.add(weightJLabel);
-		dialog.add(weightJTextField);
-		dialog.add(errorJLabel);
-		dialog.add(submitButton);
+		dialog.getContentPane().add(barNameJLabel);
+		dialog.getContentPane().add(barNameJTextField);
+		dialog.getContentPane().add(descriptionJLabel);
+		dialog.getContentPane().add(descriptionJTextField);
+		dialog.getContentPane().add(barToJLabel);
+		dialog.getContentPane().add(barToComboBox);
+		dialog.getContentPane().add(weightJLabel);
+		dialog.getContentPane().add(weightJTextField);
+		dialog.getContentPane().add(errorJLabel);
+		dialog.getContentPane().add(submitButton);
 
 		barNameJLabel.setBounds(x,y,w,h);
 		y += h + 5;
@@ -257,7 +323,7 @@ public class MainPage extends JFrame {
 		submitButton.setBounds(220,y,60,20);
 		submitButton.setText("OK");
 
-		dialog.setLayout(null);
+		dialog.getContentPane().setLayout(null);
 		dialog.setLocationByPlatform(true);
 		dialog.setLocationRelativeTo(this);
 		dialog.setSize(500,430);
@@ -304,17 +370,17 @@ public class MainPage extends JFrame {
 		int w = 400;
 		int h = 30;
 
-		dialog.add(barNameJLabel);
-		dialog.add(descriptionJLabel);
-		dialog.add(descriptionJTextField);
-		dialog.add(descriptionSubmitJButton);
-		dialog.add(menuJLabel);
-		dialog.add(menuJComboBox);
-		dialog.add(itemJLabel);
-		dialog.add(itemJComboBox);
-		dialog.add(itemJTextField);
-		dialog.add(itemSubmitJButton);
-		dialog.add(errorJLabel);
+		dialog.getContentPane().add(barNameJLabel);
+		dialog.getContentPane().add(descriptionJLabel);
+		dialog.getContentPane().add(descriptionJTextField);
+		dialog.getContentPane().add(descriptionSubmitJButton);
+		dialog.getContentPane().add(menuJLabel);
+		dialog.getContentPane().add(menuJComboBox);
+		dialog.getContentPane().add(itemJLabel);
+		dialog.getContentPane().add(itemJComboBox);
+		dialog.getContentPane().add(itemJTextField);
+		dialog.getContentPane().add(itemSubmitJButton);
+		dialog.getContentPane().add(errorJLabel);
 
 		if(!bar.getMenu().isEmpty()){
 			renderBarComboBox(bar,menuJComboBox);
@@ -352,7 +418,7 @@ public class MainPage extends JFrame {
 		errorJLabel.setBounds(175,y,w,h);
 		errorJLabel.setForeground(Color.RED);
 
-		dialog.setLayout(null);
+		dialog.getContentPane().setLayout(null);
 		dialog.setLocationByPlatform(true);
 		dialog.setLocationRelativeTo(this);
 		dialog.setSize(550,400);
