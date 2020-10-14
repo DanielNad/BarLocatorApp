@@ -1,7 +1,6 @@
 package main.java.barlocator.view;
 
 import com.locator.algorithms.datastructures.Graph;
-import com.sun.deploy.security.ruleset.Rule;
 import main.java.com.barlocator.dm.Bar;
 import main.java.com.barlocator.dm.DistanceDict;
 import main.java.com.barlocator.dm.Item;
@@ -126,10 +125,7 @@ public class MainPage extends JFrame {
 		algoToggleButton.setFont(new Font("Dialog", Font.PLAIN, 15));
 		algoToggleButton.setBounds(506, 140, 147, 30);
 		algoToggleButton.addActionListener(e -> {
-			if(isDijkstra)
-				isDijkstra = false;
-			else
-				isDijkstra = true;
+			isDijkstra = !isDijkstra;
 		});
 		headerJPanel.add(algoToggleButton);
 		
@@ -732,7 +728,7 @@ public class MainPage extends JFrame {
 
 		descriptionSubmitJButton.addActionListener(e -> {
 			if(!descriptionJTextField.getText().equals("")){
-				listener.editBarDescription(descriptionJTextField.getText().toString());
+				listener.editBarDescription(descriptionJTextField.getText());
 			}else {
 				invalidThread(errorJLabel,errorJLabel.getText());
 			}
