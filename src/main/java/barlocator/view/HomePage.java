@@ -49,7 +49,7 @@ public class HomePage extends JFrame {
 		headerJLabel.setIcon(new ImageIcon(HomePage.class.getResource("/main/resources/images/bar.png")));
 		headerJLabel.setBounds(359, 44, 203, 64);
 		headerJLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		headerJLabel.setFont(new Font("Montserrat Medium", Font.PLAIN, 23));
+		headerJLabel.setFont(new Font("Dialog", Font.PLAIN, 23));
 		headerJPanel.add(headerJLabel);
 		
 		footerJPanel = new JPanel();
@@ -59,24 +59,24 @@ public class HomePage extends JFrame {
 		footerJPanel.setLayout(null);
 		
 		rightsJLabel = new JLabel("\u00A9 All rights reserved to Bar Locator Inc.");
-		rightsJLabel.setBounds(330, 59, 278, 18);
-		rightsJLabel.setFont(new Font("Montserrat Medium", Font.PLAIN, 14));
+		rightsJLabel.setBounds(349, 58, 243, 19);
+		rightsJLabel.setFont(new Font("Dialog", Font.PLAIN, 14));
 		footerJPanel.add(rightsJLabel);
 		
 		heading2JLabel = new JLabel("Please choose a login type");
 		heading2JLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		heading2JLabel.setFont(new Font("Montserrat Medium", Font.PLAIN, 23));
+		heading2JLabel.setFont(new Font("Dialog", Font.PLAIN, 23));
 		heading2JLabel.setBounds(320, 210, 311, 29);
 		homePageJPanel.add(heading2JLabel);
 		
 		clientPageJButton = new JButton("Client");
-		clientPageJButton.setFont(new Font("Montserrat Medium", Font.PLAIN, 23));
+		clientPageJButton.setFont(new Font("Dialog", Font.PLAIN, 23));
 		clientPageJButton.setBounds(420, 284, 111, 37);
 		clientPageJButton.addActionListener(e -> listener.clientPage(false));
 		homePageJPanel.add(clientPageJButton);
 		
 		adminPageJButton = new JButton("Admin");
-		adminPageJButton.setFont(new Font("Montserrat Medium", Font.PLAIN, 23));
+		adminPageJButton.setFont(new Font("Dialog", Font.PLAIN, 23));
 		adminPageJButton.setBounds(420, 377, 111, 37);
 		adminPageJButton.addActionListener(e -> listener.adminPage(true));
 		homePageJPanel.add(adminPageJButton);
