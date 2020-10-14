@@ -1,6 +1,5 @@
 package main.java.barlocator.controller;
 
-
 import com.locator.algorithms.datastructures.Graph;
 import main.java.barlocator.model.Client;
 import main.java.barlocator.view.HomePage;
@@ -14,7 +13,6 @@ import main.java.com.barlocator.server.BodyBuilder;
 
 import javax.swing.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Controller implements HomePage.Listener, MainPage.Listener {
 
@@ -48,10 +46,14 @@ public class Controller implements HomePage.Listener, MainPage.Listener {
             view.getMainPage().getAddMenuJLabel().setVisible(true);
             view.getMainPage().getAddItemJLabel().setVisible(true);
             view.getMainPage().getRemoveBarJLabel().setVisible(true);
+            view.getMainPage().getRemoveMenuJLabel().setVisible(true);
+            view.getMainPage().getRemoveItemJLabel().setVisible(true);
             view.getMainPage().getEditBarJLabel().setVisible(true);
             view.getMainPage().getAddEdgeJLabel().setVisible(true);
             view.getMainPage().getAddBarJButton().setVisible(true);
             view.getMainPage().getDeleteBarJButton().setVisible(true);
+            view.getMainPage().getDeleteMenuJButton().setVisible(true);
+            view.getMainPage().getDeleteItemJButton().setVisible(true);
             view.getMainPage().getEditBarJButton().setVisible(true);
             view.getMainPage().getAddMenuJButton().setVisible(true);
             view.getMainPage().getAddItemJButton().setVisible(true);
@@ -69,7 +71,7 @@ public class Controller implements HomePage.Listener, MainPage.Listener {
 
     @Override
     public void search() {
-        if(view.getMainPage().getAlgoToggleButton().getModel().isPressed())
+        if(view.getMainPage().getAlgoToggleButton().isSelected())
             algo = "basic";
         else
             algo = "dijkstra";
@@ -115,6 +117,7 @@ public class Controller implements HomePage.Listener, MainPage.Listener {
     public void addEdge() {
         view.getMainPage().addEdge();
     }
+
     @Override
     public void addBarDialog(String barName, String barDes, int weight, String barTo) {
         client.sendRequest("POST",new BodyBuilder().type("bar").bar(new Bar(barName,barDes)).build());
@@ -167,7 +170,33 @@ public class Controller implements HomePage.Listener, MainPage.Listener {
 
     @Override
     public void openMenu(int i) {
+        view.getMainPage().openMenuDialog(graph.getBars().get(i));
+    }
 
+    @Override
+    public void deleteMenu() {
+        view.getMainPage().deleteMenuDialog(graph.getBars().get(view.getMainPage().getSearchJComboBox().getSelectedIndex()));
+    }
+
+    @Override
+    public void deleteItem() {
+        view.getMainPage().deleteItemDialog(graph.getBars().get(view.getMainPage().getSearchJComboBox().getSelectedIndex()));
+    }
+
+    @Override
+    public void deleteMenuDialog(String barName, String subMenuName) {
+        client.sendRequest("DELETE", new BodyBuilder().type("menu").barName(barName).menuName(subMenuName).build());
+        validateRequest(view.getMainPage().getErrorJLabel());
+        view.getMainPage().invalidThread(view.getMainPage().getErrorJLabel(),"Deleted " + subMenuName + " from " + barName);
+        renderGraph(view.getMainPage().getErrorJLabel());
+    }
+
+    @Override
+    public void deleteItemDialog(String barName, String subMenuName, String itemName) {
+        client.sendRequest("DELETE",new BodyBuilder().type("item").barName(barName).menuName(subMenuName).itemName(itemName).build());
+        validateRequest(view.getMainPage().getErrorJLabel());
+        view.getMainPage().invalidThread(view.getMainPage().getErrorJLabel(),"Deleted " + itemName + " from " + subMenuName + " in " + barName);
+        renderGraph(view.getMainPage().getErrorJLabel());
     }
 
     public boolean renderGraph(JLabel label) {
