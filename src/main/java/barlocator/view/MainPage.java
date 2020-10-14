@@ -909,25 +909,27 @@ public class MainPage extends JFrame {
 		scrollPane.setViewportView(viewPort);
 		viewPort.setLayout(null);
 		for (int i = 0; i < distance.size() ; i++) {
-			JPanel panel = new JPanel(new GridLayout(1, 4, 20, 40));
-			JLabel barNameJLabel = new JLabel(graph.getBars().get(distance.get(i).getIndex()).getBarName());
-			JLabel distanceJLabel = new JLabel(distance.get(i).getDistance() + "");
-			JLabel descriptionJLabel = new JLabel(graph.getBars().get(distance.get(i).getIndex()).getDescription());
-			JButton openMenu = new JButton("Open Menu");
-			barNameJLabel.setHorizontalAlignment(SwingConstants.CENTER);
-			distanceJLabel.setHorizontalAlignment(SwingConstants.CENTER);
-			descriptionJLabel.setHorizontalAlignment(SwingConstants.CENTER);
-			panel.add(barNameJLabel);
-			panel.add(distanceJLabel);
-			panel.add(descriptionJLabel);
-			panel.add(openMenu);
-			viewPort.add(panel);
-			int finalI = i;
-			openMenu.addActionListener(e -> listener.openMenu(distance.get(finalI).getIndex()));
-			panel.setBounds(x, yPanel, w, hPanel);
-			yPanel += 135;
-			viewPort.setPreferredSize(new Dimension(w, yPanel));
-			panel.setBorder(new LineBorder(new Color(0, 191, 255), 2, true));
+			if (distance.get(i).getDistance() != -1 && distance.get(i).getDistance() != Integer.MAX_VALUE) {
+				JPanel panel = new JPanel(new GridLayout(1, 4, 20, 40));
+				JLabel barNameJLabel = new JLabel(graph.getBars().get(distance.get(i).getIndex()).getBarName());
+				JLabel distanceJLabel = new JLabel(distance.get(i).getDistance() + "");
+				JLabel descriptionJLabel = new JLabel(graph.getBars().get(distance.get(i).getIndex()).getDescription());
+				JButton openMenu = new JButton("Open Menu");
+				barNameJLabel.setHorizontalAlignment(SwingConstants.CENTER);
+				distanceJLabel.setHorizontalAlignment(SwingConstants.CENTER);
+				descriptionJLabel.setHorizontalAlignment(SwingConstants.CENTER);
+				panel.add(barNameJLabel);
+				panel.add(distanceJLabel);
+				panel.add(descriptionJLabel);
+				panel.add(openMenu);
+				viewPort.add(panel);
+				int finalI = i;
+				openMenu.addActionListener(e -> listener.openMenu(distance.get(finalI).getIndex()));
+				panel.setBounds(x, yPanel, w, hPanel);
+				yPanel += 135;
+				viewPort.setPreferredSize(new Dimension(w, yPanel));
+				panel.setBorder(new LineBorder(new Color(0, 191, 255), 2, true));
+			}
 		}
 	}
 
