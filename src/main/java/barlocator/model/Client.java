@@ -40,43 +40,11 @@ public class Client {
         }
     }
 
-    public Socket getServer() {
-        return server;
-    }
-
-    public void setServer(Socket server) {
-        this.server = server;
-    }
-
-    public DataInputStream getIn() {
-        return in;
-    }
-
-    public void setIn(DataInputStream in) {
-        this.in = in;
-    }
-
-    public DataOutputStream getOut() {
-        return out;
-    }
-
-    public void setOut(DataOutputStream out) {
-        this.out = out;
-    }
-
     public Request getReq() {
         return req;
     }
 
-    public void setReq(Request req) {
-        this.req = req;
-    }
-
     public Response getRes() {
         return res;
-    }
-
-    public void setRes(Response res) {
-        this.res = res;
     }
 }

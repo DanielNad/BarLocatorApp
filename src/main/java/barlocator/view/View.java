@@ -1,7 +1,5 @@
 package main.java.barlocator.view;
 
-import javax.swing.*;
-
 public class View {
     private HomePage homePage;
     private MainPage mainPage;

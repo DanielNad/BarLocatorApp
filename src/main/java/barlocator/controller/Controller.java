@@ -19,8 +19,8 @@ public class Controller implements HomePage.Listener, MainPage.Listener {
     private Client client;
     private View view;
     private Graph<Bar> graph;
-    private String algo;
-    private ArrayList<DistanceDict> distance;
+    public ArrayList<DistanceDict> distance;
+    private boolean isAdmin;
 
     public Controller() {
         this.client = new Client();
@@ -31,6 +31,7 @@ public class Controller implements HomePage.Listener, MainPage.Listener {
 
     @Override
     public void clientPage(boolean isAdmin) {
+        this.isAdmin = false;
         if(renderGraph(view.getHomePage().getErrorJLabel())){
             view.getHomePage().setVisible(false);
             view.getMainPage().setVisible(true);
@@ -39,6 +40,7 @@ public class Controller implements HomePage.Listener, MainPage.Listener {
 
     @Override
     public void adminPage(boolean isAdmin) {
+        this.isAdmin = true;
         if(renderGraph(view.getHomePage().getErrorJLabel())){
             view.getHomePage().setVisible(false);
             view.getMainPage().setVisible(true);
@@ -51,13 +53,6 @@ public class Controller implements HomePage.Listener, MainPage.Listener {
             view.getMainPage().getEditBarJLabel().setVisible(true);
             view.getMainPage().getAddEdgeJLabel().setVisible(true);
             view.getMainPage().getAddBarJButton().setVisible(true);
-            view.getMainPage().getDeleteBarJButton().setVisible(true);
-            view.getMainPage().getDeleteMenuJButton().setVisible(true);
-            view.getMainPage().getDeleteItemJButton().setVisible(true);
-            view.getMainPage().getEditBarJButton().setVisible(true);
-            view.getMainPage().getAddMenuJButton().setVisible(true);
-            view.getMainPage().getAddItemJButton().setVisible(true);
-            view.getMainPage().getAddEdgeJButton().setVisible(true);
         }
     }
 
@@ -71,6 +66,7 @@ public class Controller implements HomePage.Listener, MainPage.Listener {
 
     @Override
     public void search() {
+        String algo;
         if(view.getMainPage().getAlgoToggleButton().isSelected())
             algo = "basic";
         else
@@ -79,6 +75,7 @@ public class Controller implements HomePage.Listener, MainPage.Listener {
         validateRequest(view.getMainPage().getErrorJLabel());
         distance = client.getRes().getBody().getDistance();
         view.getMainPage().search(graph,distance);
+        view.getMainPage().getViewPort().setVisible(true);
         renderGraph(view.getMainPage().getErrorJLabel());
     }
 
@@ -89,9 +86,12 @@ public class Controller implements HomePage.Listener, MainPage.Listener {
 
     @Override
     public void deleteBar() {
+        view.getMainPage().getViewPort().setVisible(false);
         client.sendRequest("DELETE", new BodyBuilder().type("bar").barName(view.getMainPage().getSearchJComboBox().getSelectedItem().toString()).build());
         if(validateRequest(view.getMainPage().getErrorJLabel())){
+            int prevIndex = view.getMainPage().getSearchJComboBox().getSelectedIndex();
             view.getMainPage().invalidThread(view.getMainPage().getErrorJLabel(),"Deleted " + client.getReq().getBody().getBarName());
+            view.getMainPage().getSearchJComboBox().setSelectedIndex(prevIndex - 1);
             renderGraph(view.getMainPage().getErrorJLabel());
         } else {
             view.getMainPage().invalidThread(view.getMainPage().getErrorJLabel(),"Sorry, an error has occurred");
@@ -119,10 +119,8 @@ public class Controller implements HomePage.Listener, MainPage.Listener {
     }
 
     @Override
-    public void addBarDialog(String barName, String barDes, int weight, String barTo) {
-        client.sendRequest("POST",new BodyBuilder().type("bar").bar(new Bar(barName,barDes)).build());
-        validateRequest(view.getMainPage().getErrorJLabel());
-        client.sendRequest("POST", new BodyBuilder().type("edge").barName(barName).barTo(barTo).weight(weight).build());
+    public void addBarDialog(String barName, String barDes) {
+        client.sendRequest("POST", new BodyBuilder().type("bar").bar(new Bar(barName, barDes)).build());
         validateRequest(view.getMainPage().getErrorJLabel());
         renderGraph(view.getMainPage().getErrorJLabel());
     }
@@ -206,8 +204,29 @@ public class Controller implements HomePage.Listener, MainPage.Listener {
         if (client.getRes().getBody().getStatus().equals("ok")) {
             graph = client.getRes().getBody().getGraph();
             view.getMainPage().renderGraphComboBox(graph,view.getMainPage().getSearchJComboBox());
-            view.getMainPage().getSearchJComboBox().setSelectedIndex(selectedItem);
-            return  true;
+            if(graph.getVertices() != 0) {
+                view.getMainPage().getSearchJComboBox().setSelectedIndex(selectedItem);
+                view.getMainPage().getBarSearchJButton().setVisible(true);
+                if(isAdmin){
+                    view.getMainPage().getDeleteBarJButton().setVisible(true);
+                    view.getMainPage().getDeleteMenuJButton().setVisible(true);
+                    view.getMainPage().getDeleteItemJButton().setVisible(true);
+                    view.getMainPage().getEditBarJButton().setVisible(true);
+                    view.getMainPage().getAddMenuJButton().setVisible(true);
+                    view.getMainPage().getAddItemJButton().setVisible(true);
+                    view.getMainPage().getAddEdgeJButton().setVisible(true);
+                }
+            } else {
+                view.getMainPage().getBarSearchJButton().setVisible(false);
+                view.getMainPage().getDeleteBarJButton().setVisible(false);
+                view.getMainPage().getDeleteMenuJButton().setVisible(false);
+                view.getMainPage().getDeleteItemJButton().setVisible(false);
+                view.getMainPage().getEditBarJButton().setVisible(false);
+                view.getMainPage().getAddMenuJButton().setVisible(false);
+                view.getMainPage().getAddItemJButton().setVisible(false);
+                view.getMainPage().getAddEdgeJButton().setVisible(false);
+            }
+                return true;
         } else {
             view.getHomePage().invalidThread(label);
             return  false;

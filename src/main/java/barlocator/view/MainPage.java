@@ -32,7 +32,6 @@ public class MainPage extends JFrame {
 	private Listener listener;
 	private JLabel errorJLabel;
 	private JToggleButton algoToggleButton;
-	private boolean isDijkstra;
 	private JScrollPane scrollPane;
 	private JButton addMenuJButton;
 	private JButton addItemJButton;
@@ -46,6 +45,7 @@ public class MainPage extends JFrame {
 	private JLabel removeMenuJLabel;
 	private JLabel removeItemJLabel;
 	private JPanel viewPort;
+	private boolean isDijkstra;
 
 	public interface Listener{
 		void goBack();
@@ -58,7 +58,7 @@ public class MainPage extends JFrame {
 		void addMenu();
 		void addItem();
 		void addEdge();
-		void addBarDialog(String barName , String barDes, int weight, String barTo);
+		void addBarDialog(String barName , String barDes);
 		void editBarDescription(String description);
 		void editItemPrice(double itemPrice,String menuName, String itemName);
 		void addMenuDialog(String barName ,Menu menu);
@@ -289,12 +289,16 @@ public class MainPage extends JFrame {
 		}
 	}
 
-	public JComboBox getSearchJComboBox() {
-		return searchJComboBox;
+	public JButton getBarSearchJButton() {
+		return barSearchJButton;
 	}
 
 	public JButton getAddBarJButton() {
 		return addBarJButton;
+	}
+
+	public JComboBox getSearchJComboBox() {
+		return searchJComboBox;
 	}
 
 	public JButton getDeleteBarJButton() {
@@ -365,6 +369,10 @@ public class MainPage extends JFrame {
 		return algoToggleButton;
 	}
 
+	public JPanel getViewPort() {
+		return viewPort;
+	}
+
 	public void addBar(Graph graph){
 		JFrame frame = new JFrame();
 		frame.setSize(700, 700);
@@ -373,10 +381,6 @@ public class MainPage extends JFrame {
 		JTextField barNameJTextField = new JTextField();
 		JLabel descriptionJLabel = new JLabel("Please enter a bar description:");
 		JTextField descriptionJTextField = new JTextField();
-		JLabel barToJLabel = new JLabel("Please enter a bar to connect:");
-		JComboBox barToComboBox = new JComboBox();
-		JLabel weightJLabel = new JLabel("Please enter a distance between the bars:");
-		JTextField weightJTextField = new JTextField();
 		JLabel errorJLabel = new JLabel("Text fields should not be empty!");
 		JButton submitButton = new JButton();
 
@@ -385,16 +389,12 @@ public class MainPage extends JFrame {
 		int w = 400;
 		int h = 30;
 
-		dialog.getContentPane().add(barNameJLabel);
-		dialog.getContentPane().add(barNameJTextField);
-		dialog.getContentPane().add(descriptionJLabel);
-		dialog.getContentPane().add(descriptionJTextField);
-		dialog.getContentPane().add(barToJLabel);
-		dialog.getContentPane().add(barToComboBox);
-		dialog.getContentPane().add(weightJLabel);
-		dialog.getContentPane().add(weightJTextField);
-		dialog.getContentPane().add(errorJLabel);
-		dialog.getContentPane().add(submitButton);
+		dialog.add(barNameJLabel);
+		dialog.add(barNameJTextField);
+		dialog.add(descriptionJLabel);
+		dialog.add(descriptionJTextField);
+		dialog.add(errorJLabel);
+		dialog.add(submitButton);
 
 		barNameJLabel.setBounds(x,y,w,h);
 		y += h + 5;
@@ -403,15 +403,6 @@ public class MainPage extends JFrame {
 		descriptionJLabel.setBounds(x,y,w,h);
 		y += h + 5;
 		descriptionJTextField.setBounds(x,y,w,h);
-		y += h + 5;
-		barToJLabel.setBounds(x,y,w,h);
-		y += h + 5;
-		barToComboBox.setBounds(x,y,w,h);
-		renderGraphComboBox(graph,barToComboBox);
-		y += h + 5;
-		weightJLabel.setBounds(x,y,w,h);
-		y += h + 5;
-		weightJTextField.setBounds(x,y,w,h);
 		y += h + 10;
 		errorJLabel.setBounds(158,y,w,h);
 		errorJLabel.setVisible(false);
@@ -423,14 +414,12 @@ public class MainPage extends JFrame {
 		dialog.getContentPane().setLayout(null);
 		dialog.setLocationByPlatform(true);
 		dialog.setLocationRelativeTo(this);
-		dialog.setSize(450,430);
+		dialog.setSize(450,300);
 		dialog.setVisible(true);
 
-		validateNumber(weightJTextField);
-
 		submitButton.addActionListener(e -> {
-			if(!barNameJTextField.getText().equals("") && !descriptionJTextField.getText().equals("") && !weightJTextField.getText().equals("")){
-				listener.addBarDialog(barNameJTextField.getText(),descriptionJTextField.getText(),Integer.parseInt(weightJTextField.getText()),barToComboBox.getSelectedItem().toString());
+			if(!barNameJTextField.getText().equals("") && !descriptionJTextField.getText().equals("")){
+				listener.addBarDialog(barNameJTextField.getText(),descriptionJTextField.getText());
 				dialog.setVisible(false);
 			}else {
 				invalidThread(errorJLabel,errorJLabel.getText());
@@ -912,7 +901,7 @@ public class MainPage extends JFrame {
 			if (distance.get(i).getDistance() != -1 && distance.get(i).getDistance() != Integer.MAX_VALUE) {
 				JPanel panel = new JPanel(new GridLayout(1, 4, 20, 40));
 				JLabel barNameJLabel = new JLabel(graph.getBars().get(distance.get(i).getIndex()).getBarName());
-				JLabel distanceJLabel = new JLabel(distance.get(i).getDistance() + "");
+				JLabel distanceJLabel = new JLabel(distance.get(i).getDistance() + " Km");
 				JLabel descriptionJLabel = new JLabel(graph.getBars().get(distance.get(i).getIndex()).getDescription());
 				JButton openMenu = new JButton("Open Menu");
 				barNameJLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -937,32 +926,33 @@ public class MainPage extends JFrame {
 		JFrame frame = new JFrame();
 		JDialog dialog = new JDialog(frame,bar.getBarName() + " Menu");
 		JScrollPane scrollPane = new JScrollPane();
-		JPanel viewPort = new JPanel(new GridLayout(0,1,10,10));
+		JPanel viewPort = new JPanel(new GridLayout(bar.getMenu().size(),1));
 		JLabel errorJLabel = new JLabel("Oops... no menus to show");
-
+		int y = 70;
 		scrollPane.setViewportView(viewPort);
 		if(bar.getMenu().isEmpty()){
 			invalidThread(errorJLabel,errorJLabel.getText());
 		}
 		else {
 			for (Menu menu : bar.getMenu().values()) {
-				JPanel menuPanel = new JPanel(new GridLayout(1 + menu.getItems().size(),2));
-				JLabel menuName = new JLabel("         " + menu.getSubMenuName());
+				JPanel menuPanel = new JPanel( new GridLayout(menu.getItems().size() + 1,1));
+				JLabel menuName = new JLabel("          " + menu.getSubMenuName());
 				menuPanel.add(menuName);
 				for (Item item : menu.getItems().values()) {
-					JPanel itemPanel = new JPanel(new GridLayout(0,3));
-					JLabel itemName = new JLabel("                - " + item.getItemName());
-					JLabel itemPrice = new JLabel("... " + item.getPrice() + " ₪");
+					JPanel itemPanel = new JPanel();
+					JLabel itemName = new JLabel(item.getItemName());
+					JLabel itemPrice = new JLabel(item.getPrice() + " ₪");
 					itemPanel.add(itemName);
 					itemPanel.add(itemPrice);
 					menuPanel.add(itemPanel);
+					y += 70;
 				}
 				viewPort.add(menuPanel);
 			}
 		}
 
 		dialog.getContentPane().add(scrollPane);
-		viewPort.setPreferredSize(new Dimension(532,369));
+		viewPort.setPreferredSize(new Dimension(532,y));
 		dialog.getContentPane().setLayout(null);
 		dialog.setLocationByPlatform(true);
 		dialog.setLocationRelativeTo(this);

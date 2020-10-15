@@ -59,7 +59,7 @@ public class HomePage extends JFrame {
 		footerJPanel.setLayout(null);
 		
 		rightsJLabel = new JLabel("\u00A9 All rights reserved to Bar Locator Inc.");
-		rightsJLabel.setBounds(349, 58, 243, 19);
+		rightsJLabel.setBounds(349, 58, 248, 19);
 		rightsJLabel.setFont(new Font("Dialog", Font.PLAIN, 14));
 		footerJPanel.add(rightsJLabel);
 		
@@ -89,14 +89,6 @@ public class HomePage extends JFrame {
 		homePageJPanel.add(errorJLabel);
 	}
 
-	public JButton getClientPageJButton() {
-		return clientPageJButton;
-	}
-
-	public JButton getAdminPageJButton() {
-		return adminPageJButton;
-	}
-
 	public JLabel getErrorJLabel() {
 		return errorJLabel;
 	}
@@ -112,10 +104,6 @@ public class HomePage extends JFrame {
 			}
 
 		}).start();
-	}
-
-	public Listener getListener() {
-		return listener;
 	}
 
 	public void setListener(Listener listener) {
